@@ -34,7 +34,7 @@ class DataSource {
                 if(response.isSuccessful) {
                     Log.d("Main", "success!" + response.body().toString())
                     Result.success(
-                        response.body()!!.foundData
+                        response.body()!!.data
                     )
                 }
             }

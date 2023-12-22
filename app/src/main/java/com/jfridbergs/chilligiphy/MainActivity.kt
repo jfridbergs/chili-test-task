@@ -110,8 +110,8 @@ fun MainScreen() {
                     title = "",
                     url = "",
                     images = DataImage(
-                        ogImage = OriginalImage(
-                            imageUrl=""
+                        original = OriginalImage(
+                            url=""
                         )
                     )
                 )
@@ -165,7 +165,7 @@ private fun GifItemsList(items: List<GifData>) {
             itemContent = { gifItem ->
 
                     GlideImage(
-                        model = gifItem.images.ogImage.imageUrl,
+                        model = gifItem.images.original.url,
                         contentDescription =gifItem.title,
                         modifier = Modifier.size(200.dp),
                         contentScale = ContentScale.Crop)
@@ -178,6 +178,8 @@ private fun GifItemsList(items: List<GifData>) {
 
     }
 
+
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 private fun PaginatorSample(){
     val viewModel = viewModel<GifViewModel>()
@@ -192,13 +194,11 @@ private fun PaginatorSample(){
             Column(modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp)){
-                Text(
-                    text = item.title,
-                    fontSize = 20.sp,
-                    color = Color.Black
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Text(item.description)
+                GlideImage(
+                    model = item.images.original.url,
+                    contentDescription =item.title,
+                    modifier = Modifier.size(200.dp),
+                    contentScale = ContentScale.Crop)
             }
         }
         item {
@@ -238,7 +238,7 @@ fun sendRequest(
         override fun onResponse(call: Call<GiphySearchResponse?>, response: Response<GiphySearchResponse?>) {
             if(response.isSuccessful) {
                 Log.d("Main", "success!" + response.body().toString())
-                foundData.value = response.body()!!.foundData
+                foundData.value = response.body()!!.data
             }
         }
 

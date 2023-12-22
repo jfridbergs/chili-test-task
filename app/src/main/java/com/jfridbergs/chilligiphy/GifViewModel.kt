@@ -5,6 +5,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.jfridbergs.chilligiphy.api.GifData
 import kotlinx.coroutines.launch
 
 class GifViewModel: ViewModel() {
@@ -19,7 +20,7 @@ class GifViewModel: ViewModel() {
             state = state.copy(isLoading = it)
         },
         onRequest = {
-            nextPage -> repository.getItems(nextPage, 20)
+            nextPage -> repository.getGifItems(nextPage, 20)
         },
         getNextKey = {
             state.page + 1
@@ -50,7 +51,7 @@ class GifViewModel: ViewModel() {
 
 data class ScreenState(
     val isLoading: Boolean = false,
-    val items: List<ListItem> = emptyList(),
+    val items: List<GifData> = emptyList(),
     val error: String? = null,
     val endReached: Boolean = false,
     val page: Int = 0

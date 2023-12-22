@@ -1,8 +1,26 @@
 package com.jfridbergs.chilligiphy
 
+import android.net.http.HttpResponseCache.install
+import com.jfridbergs.chilligiphy.api.GifData
+import com.jfridbergs.chilligiphy.api.GiphySearchResponse
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.android.Android
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.request.get
+import io.ktor.http.ContentType
+import io.ktor.http.ContentType.Application.Json
+import io.ktor.serialization.kotlinx.json.json
 import kotlinx.coroutines.delay
+import kotlinx.serialization.json.Json
 
 class Repository {
+
+    private val httpClient = HttpClient(Android) {
+        install(ContentNegotiation) {
+            json(Json{ ignoreUnknownKeys = true },contentType = ContentType("application", "json"))
+        }
+    }
 
     private val remoteDataSource = (1..100).map {
         ListItem(
@@ -20,4 +38,18 @@ class Repository {
             )
         } else Result.success(emptyList())
     }
+
+    suspend fun getGifItems(page: Int, pageSize: Int): Result<List<GifData>>{
+        val offset = page*5
+        val response: GiphySearchResponse = httpClient.get("http://api.giphy.com/v1/gifs/search"){
+            url {
+                parameters.append("api_key", "X6KFLXMVg82h8zL0sGdVZwEuHXaO2XD1")
+                parameters.append("q", "cats")
+                parameters.append("limit","5")
+                parameters.append("offset", offset.toString())
+            }
+        }.body()
+        return Result.success(response.data)
+    }
 }
+
