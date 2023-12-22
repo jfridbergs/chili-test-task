@@ -14,5 +14,6 @@ public interface GiphyApi {
     @GET("v1/gifs/search")
     abstract fun getGifsBySearch(@Query("api_key") apiKey: String,
                                  @Query("limit") limit: Int,
+                                 @Query("offset") offset: Int,
                                  @Query("q") search: String): Call<GiphySearchResponse?>?
 }
