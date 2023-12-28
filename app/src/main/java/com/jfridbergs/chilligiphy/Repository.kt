@@ -1,6 +1,7 @@
 package com.jfridbergs.chilligiphy
 
 import android.net.http.HttpResponseCache.install
+import android.util.Log
 import com.jfridbergs.chilligiphy.api.GifData
 import com.jfridbergs.chilligiphy.api.GiphySearchResponse
 import io.ktor.client.HttpClient
@@ -39,13 +40,15 @@ class Repository {
         } else Result.success(emptyList())
     }
 
-    suspend fun getGifItems(page: Int, pageSize: Int): Result<List<GifData>>{
-        val offset = page*5
+    suspend fun getGifItems(query: String, page: Int, pageSize: Int): Result<List<GifData>>{
+        Log.d("REPOSITORY", "Search query: $query")
+        Log.d("REPOSITORY", "Page number: $page")
+        val offset = page*pageSize
         val response: GiphySearchResponse = httpClient.get("http://api.giphy.com/v1/gifs/search"){
             url {
                 parameters.append("api_key", "X6KFLXMVg82h8zL0sGdVZwEuHXaO2XD1")
-                parameters.append("q", "cats")
-                parameters.append("limit","5")
+                parameters.append("q", query)
+                parameters.append("limit",pageSize.toString())
                 parameters.append("offset", offset.toString())
             }
         }.body()

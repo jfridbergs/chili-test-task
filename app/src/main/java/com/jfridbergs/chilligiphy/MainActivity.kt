@@ -7,19 +7,27 @@ import android.view.View
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
@@ -32,6 +40,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -44,10 +54,10 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.jfridbergs.chilligiphy.api.DataImage
+import com.jfridbergs.chilligiphy.api.FwImage
 import com.jfridbergs.chilligiphy.api.GifData
 import com.jfridbergs.chilligiphy.api.GiphyApi
 import com.jfridbergs.chilligiphy.api.GiphySearchResponse
-import com.jfridbergs.chilligiphy.api.OriginalImage
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 import com.jfridbergs.chilligiphy.ui.theme.ChilliGiphyTheme
@@ -110,7 +120,7 @@ fun MainScreen() {
                     title = "",
                     url = "",
                     images = DataImage(
-                        original = OriginalImage(
+                        fixed_width = FwImage(
                             url=""
                         )
                     )
@@ -165,7 +175,7 @@ private fun GifItemsList(items: List<GifData>) {
             itemContent = { gifItem ->
 
                     GlideImage(
-                        model = gifItem.images.original.url,
+                        model = gifItem.images.fixed_width.url,
                         contentDescription =gifItem.title,
                         modifier = Modifier.size(200.dp),
                         contentScale = ContentScale.Crop)
@@ -179,41 +189,79 @@ private fun GifItemsList(items: List<GifData>) {
     }
 
 
-@OptIn(ExperimentalGlideComposeApi::class)
+@OptIn(ExperimentalGlideComposeApi::class, ExperimentalMaterial3Api::class)
 @Composable
-private fun PaginatorSample(){
+fun PaginatorSample(){
+
+    val query = remember {
+        mutableStateOf(TextFieldValue())
+    }
     val viewModel = viewModel<GifViewModel>()
     val state = viewModel.state
-    LazyColumn(modifier = Modifier.fillMaxSize()){
-        items(state.items.size) {
-                i ->
-            val item = state.items[i]
-            if(i>=state.items.size -1 && !state.endReached && !state.isLoading){
-                viewModel.loadNextItems()
-            }
-            Column(modifier = Modifier
+
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        TextField(
+            label = { Text(text = "Search for gifs")},
+            value = query.value,
+            modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)){
-                GlideImage(
-                    model = item.images.original.url,
-                    contentDescription =item.title,
-                    modifier = Modifier.size(200.dp),
-                    contentScale = ContentScale.Crop)
+                .padding(top = 10.dp, bottom = 10.dp, start = 40.dp, end = 40.dp)
+                .background(
+                    colorResource(id = R.color.search_bg),
+                    shape = RoundedCornerShape(7.dp)
+                ).semantics { testTag="SearchInput" },
+            shape = RoundedCornerShape(7.dp),
+            leadingIcon = { Icon( imageVector = Icons.Default.Search, contentDescription = "Search") },
+            colors = TextFieldDefaults.textFieldColors(
+                focusedIndicatorColor = Color.Transparent,
+                disabledIndicatorColor = Color.Transparent,
+                unfocusedIndicatorColor = Color.Transparent
+            ),
+            onValueChange = { query.value = it
+                viewModel.resetState(query.value.text)
             }
-        }
-        item {
-            if(state.isLoading){
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    horizontalArrangement = Arrangement.Center
-                ){
-                    CircularProgressIndicator()
+        )
+
+        Spacer(modifier = Modifier.height(15.dp))
+
+
+        LazyVerticalGrid(modifier = Modifier.fillMaxSize().semantics { testTag="SearchOutput" },
+        columns = GridCells.Fixed(2)){
+            items(state.items.size) {
+                    i ->
+                val item = state.items[i]
+                if(i>=state.items.size -1 && !state.endReached && !state.isLoading){
+                    viewModel.loadNextItems(query.value.text)
+                }
+
+                    GlideImage(
+                        model = item.images.fixed_width.url,
+                        contentDescription =item.title,
+                        modifier = Modifier.requiredSize(180.dp).padding(5.dp),
+                        contentScale = ContentScale.Crop)
+                }
+
+            item {
+                if(state.isLoading){
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.Center
+                    ){
+                        CircularProgressIndicator()
+                    }
                 }
             }
         }
     }
+
+
+
 }
 
 

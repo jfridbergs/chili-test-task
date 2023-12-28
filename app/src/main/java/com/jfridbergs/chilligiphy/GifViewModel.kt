@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import com.jfridbergs.chilligiphy.api.GifData
 import kotlinx.coroutines.launch
 
-class GifViewModel: ViewModel() {
+class GifViewModel(): ViewModel() {
 
     private val repository = Repository()
 
@@ -20,7 +20,7 @@ class GifViewModel: ViewModel() {
             state = state.copy(isLoading = it)
         },
         onRequest = {
-            nextPage -> repository.getGifItems(nextPage, 20)
+            query, nextPage -> repository.getGifItems(query,nextPage, 10)
         },
         getNextKey = {
             state.page + 1
@@ -38,13 +38,21 @@ class GifViewModel: ViewModel() {
 
     )
 
-    init {
-        loadNextItems()
+
+    fun newQuery(query: String){
+        state.page = 0
+        loadNextItems(query)
     }
 
-    fun loadNextItems(){
+    fun resetState(newQuery: String){
+        state = state.copy(isLoading = false,page = 0, items = emptyList(), endReached = false)
+        paginator.reset()
+        loadNextItems(newQuery)
+    }
+
+    fun loadNextItems(query: String){
         viewModelScope.launch{
-            paginator.loadNextItems()
+            paginator.loadNextItems(query)
         }
     }
 }
@@ -54,5 +62,5 @@ data class ScreenState(
     val items: List<GifData> = emptyList(),
     val error: String? = null,
     val endReached: Boolean = false,
-    val page: Int = 0
+    var page: Int = 0
 )

@@ -17,11 +17,11 @@ data class GifData(
 
 @Serializable
 data class DataImage(
-    @SerializedName("original") val original: OriginalImage
+    @SerializedName("fixed_width") val fixed_width: FwImage
 )
 
 @Serializable
-data class OriginalImage(
+data class FwImage(
     @SerializedName("url") val url: String
 )
 
