@@ -1,4 +1,4 @@
-package com.jfridbergs.chilligiphy.ui.theme
+package com.jfridbergs.chiligiphysearch.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

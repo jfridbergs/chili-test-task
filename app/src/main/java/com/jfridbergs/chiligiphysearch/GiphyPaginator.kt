@@ -1,4 +1,4 @@
-package com.jfridbergs.chilligiphy
+package com.jfridbergs.chiligiphysearch
 
 class GiphyPaginator<Key, Item>(
     private val initialKey: Key,

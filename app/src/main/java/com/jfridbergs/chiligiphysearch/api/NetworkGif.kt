@@ -1,4 +1,4 @@
-package com.jfridbergs.chilligiphy.api
+package com.jfridbergs.chiligiphysearch.api
 
 import com.google.gson.annotations.SerializedName
 import kotlinx.serialization.Serializable

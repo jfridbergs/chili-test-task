@@ -1,4 +1,4 @@
-package com.jfridbergs.chilligiphy
+package com.jfridbergs.chiligiphysearch
 
 import org.junit.Test
 

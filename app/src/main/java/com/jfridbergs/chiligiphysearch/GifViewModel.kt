@@ -1,11 +1,12 @@
-package com.jfridbergs.chilligiphy
+package com.jfridbergs.chiligiphysearch
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jfridbergs.chilligiphy.api.GifData
+import com.jfridbergs.chiligiphysearch.api.GifData
+import com.jfridbergs.chiligiphysearch.api.Repository
 import kotlinx.coroutines.launch
 
 class GifViewModel(): ViewModel() {

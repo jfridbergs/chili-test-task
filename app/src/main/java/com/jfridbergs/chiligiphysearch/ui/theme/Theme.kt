@@ -1,4 +1,4 @@
-package com.jfridbergs.chilligiphy.ui.theme
+package com.jfridbergs.chiligiphysearch.ui.theme
 
 import android.app.Activity
 import android.os.Build
@@ -38,7 +38,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun ChilliGiphyTheme(
+fun ChiliGiphyTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     // Dynamic color is available on Android 12+
     dynamicColor: Boolean = true,
