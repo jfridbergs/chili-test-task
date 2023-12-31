@@ -40,10 +40,6 @@ class GifViewModel(): ViewModel() {
     )
 
 
-    fun newQuery(query: String){
-        state.page = 0
-        loadNextItems(query)
-    }
 
     fun resetState(newQuery: String){
         state = state.copy(isLoading = false,page = 0, items = emptyList(), endReached = false)
@@ -57,7 +53,6 @@ class GifViewModel(): ViewModel() {
         }
     }
 }
-
 data class ScreenState(
     val isLoading: Boolean = false,
     val items: List<GifData> = emptyList(),

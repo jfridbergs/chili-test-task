@@ -1,5 +1,6 @@
 package com.jfridbergs.chiligiphysearch
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -25,6 +26,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
@@ -92,10 +94,10 @@ fun PaginatorSample(){
         )
 
         Spacer(modifier = Modifier.height(15.dp))
-
+        var columnCount = if (LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE )  4 else 2
 
         LazyVerticalGrid(modifier = Modifier.fillMaxSize().semantics { testTag="SearchOutput" },
-        columns = GridCells.Fixed(2)){
+        columns = GridCells.Fixed(columnCount)){
             items(state.items.size) {
                     i ->
                 val item = state.items[i]
